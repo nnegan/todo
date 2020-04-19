@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequestMapping("/v1/todo")
+@CrossOrigin(origins = {"http://localhost:63342" })
 public class BoardController {
 
     @Autowired

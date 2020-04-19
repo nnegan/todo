@@ -3,7 +3,165 @@
 ## 과제내용
 간단한 To-do 앱을 웹 기술을 사용하여 개발한다.
 
+## API명세
+추가 POST
+```
+http://127.0.0.1:18080/backend/v1/todo/add
+```
+json
+```
+{
+	"boardContents" : "999999999999999999"
+	,"boardStatus":"N",
+,"boardRelation": [
+			{          
+            "relationBoardNumber": 1
+    		 },
+    		 {          
+            "relationBoardNumber": 2
+    		 }
+       ]	
+}
+```
+결과
+```
+{
+    "returnCode": "SUCCESS",
+    "message": "성공",
+    "data": {
+        "boardNumber": 6,
+        "boardRelation": null,
+        "boardContents": "vvvvv",
+        "boardStatus": "N",
+        "createdAt": "20200419",
+        "updatedAt": "20200419"
+    }
+}
+```
+조회 GET
+```
+http://127.0.0.1:18080/backend/v1/todo/list?page=2&pageSize=10
+```
+결과
+```
+{
+    "returnCode": null,
+    "message": null,
+    "data": null,
+    "totalCount": 3,
+    "page": 1,
+    "pageSize": 10,
+    "dataList": [
+        {
+            "boardNumber": 4,
+            "boardRelation": [],
+            "boardContents": "vvvvv",
+            "boardStatus": "N",
+            "createdAt": "20200419",
+            "updatedAt": "20200419"
+        },
+        {
+            "boardNumber": 5,
+            "boardRelation": [],
+            "boardContents": "vvvvv",
+            "boardStatus": "N",
+            "createdAt": "20200419",
+            "updatedAt": "20200419"
+        },
+        {
+            "boardNumber": 6,
+            "boardRelation": [],
+            "boardContents": "vvvvv",
+            "boardStatus": "N",
+            "createdAt": "20200419",
+            "updatedAt": "20200419"
+        }
+    ]
+}
+```
+수정 POST
+```
+http://127.0.0.1:18080/backend/v1/todo/update
+```
+json
+```
+{
+	"boardNumber" :3
+	,"boardContents" : "테스트"
+    ,"boardRelation": [
+			{          
+            "relationBoardNumber": 1
+    		 },
+    		 {          
+            "relationBoardNumber": 2
+    		 }
+       ]	
+}
+```
+결과
+```
+{
+    "returnCode": "SUCCESS",
+    "message": "성공",
+    "data": {
+        "boardNumber": 3,
+        "boardRelation": [
+            {
+                "seq": null,
+                "relationBoardNumber": 1
+            },
+            {
+                "seq": null,
+                "relationBoardNumber": 2
+            }
+        ],
+        "boardContents": "테스트",
+        "boardStatus": null,
+        "createdAt": null,
+        "updatedAt": null
+    }
+}
+```
+삭제 PUT
+```
+http://127.0.0.1:18080/backend/v1/todo/delete/2
+```
+결과
+```
+{
+    "returnCode": "SUCCESS",
+    "message": "성공",
+    "data": {
+        "boardNumber": 2,
+        "boardRelation": [],
+        "boardContents": "111",
+        "boardStatus": null,
+        "createdAt": "20200418",
+        "updatedAt": "20200418"
+    }
+}
+```
+상세 GET
+```
+http://127.0.0.1:18080/backend/v1/todo/detail/2
+```
+결과
+```
+{
+    "returnCode": "SUCCESS",
+    "message": "성공",
+    "data": {
+        "boardNumber": 2,
+        "boardRelation": [],
+        "boardContents": "111",
+        "boardStatus": null,
+        "createdAt": "20200418",
+        "updatedAt": "20200418"
+    }
+}
+```
 ## 기능 요구 사항
+- [ ] 프론트단 구성을 못함.
 - [x] 사용자는 문자열로 된 todo 항목을 추가 할 수 있다.
 - [x] todo는 다른 todo들을 참조할 수 있다.
 - [x] 사용자는 todo 목록을 조회할 수 있다.
@@ -12,7 +170,7 @@
 - [x] 사용자는 todo를 수정할 수 있다.
 - [x] 사용자는 todo를 삭제할 수 있다.
 - [x] 사용자는 todo를 완료 또는 미완료로 상태변경을 할 수 있다.
-    - [x] 참조하고 있는 todo들이 모두 완료 상태가 아니라면 todo를 완료할 수 없다.
+    - [ ] 참조하고 있는 todo들이 모두 완료 상태가 아니라면 todo를 완료할 수 없다.
 ## 필수사항
 - [x] 웹 기술을 이용할 것
 - [x] 서버는 REST API 로 구현할 것.

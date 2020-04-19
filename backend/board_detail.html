@@ -1,0 +1,130 @@
+<!doctype html>
+<html>
+<head>
+
+    <meta charset="utf-8">
+    <title>HTML Example</title>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script>
+
+        $("document").ready(function(){
+            detail(getParameterByName('boardNumber'));
+
+        })
+
+        function getParameterByName(name) {
+            name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+            var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+                results = regex.exec(location.search);
+            return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+        }
+        ;
+        function detail(boardNumber){
+            $.ajax({
+                url: "http://localhost:18080/backend/v1/todo/detail/"+boardNumber,
+                type: "GET",
+                //  dataType: "json",
+                success: function(data) {
+                    console.log(data.data.boardNumber);
+                    $('#boardNumber').val(data.data.boardNumber);
+                    $('#boardContents').val(data.data.boardContents);
+                    $('#boardStatus').val(data.data.boardStatus);
+
+                    $('#createdAt').html(data.data.createdAt);
+                    $('#updatedAt').html(data.data.updatedAt);
+                    var str;
+                    $(data.data.boardRelation).each(function(){
+                        str +=  "<input type=\"text\" name=\"relationBoardNumber\" value='" +  this.relationBoardNumber + "'><br/>";
+                    });
+                    $("#addnumber").append(str);
+                }
+            });
+        }
+
+        function save(){
+
+            var grpl = $("input[name=relationBoardNumber]").length;
+            var grparr = new Array(grpl);
+
+            var strarr  = new Array();
+
+            var obj2 = new Object();
+            for(var i=0; i<grpl; i++) {
+                grparr[i] = $("input[name=relationBoardNumber]").eq(i).val();
+                obj2.relationBoardNumber = grparr[i];
+                strarr.push(obj2);
+            }
+
+            var obj = new Object();
+            obj.boardNumber = $( '#boardNumber' ).val();
+            obj.boardContents = $( '#boardContents' ).val();
+            obj.boardStatus = $( '#boardStatus' ).val();
+            obj.boardRelation = strarr;
+
+            var jsonData = JSON.stringify(obj);
+
+            $.ajax({
+                url: "http://localhost:18080/backend/v1/todo/update",
+                type: "POST",
+                data: jsonData,
+                dataType: "json",
+                accept: "application/json",
+                contentType: "application/json; charset=utf-8",
+                success: function(data) {
+
+                },
+                error: function (request, status, error){
+                    var msg = "ERROR : " + request.status + "<br>"
+                    msg +=  + "내용 : " + request.responseText + "<br>" + error;
+                    console.log(msg);
+                }
+            });
+        }
+
+        function add() {
+            var str = "<input type=\"text\" name=\"relationBoardNumber\" value=''><br/>";
+            $("#addnumber").append(str);
+        }
+
+        function deleteboard(boardNumber){
+            $.ajax({
+                url: "http://localhost:18080/backend/v1/todo/delete/"+boardNumber,
+                type: "PUT",
+                //  dataType: "json",
+                success: function(data) {
+                    searchlist(1);
+                }
+            });
+        }
+
+    </script>
+
+</head>
+
+<body>
+
+<p>여기를 클릭하세요</p>
+<a href="./board.html" >리스트페이지</a>
+</br/>
+<div style="height: 20px;"></div>
+
+todo 번호 : <input type="text" maxlength="10" id="boardNumber" disabled/><br/>
+내용 : <input type="text" maxlength="100" id="boardContents"/><br/>
+상태 : <select id="boardStatus">
+        <option value="N">미완료</option>
+         <option value="Y">완료</option>
+</select>
+</br>
+참조 Todo <a href="javascript:add();" id="add" >추가</a>
+<div id="addnumber" >
+</div>
+</br>
+등록일 : <div id="createdAt"></div>
+수정일 : <div id="updatedAt"></div>
+
+</br>
+<a href="javascript:save();" id="save" >저장</a>
+<a href="javascript:deleteboard();" id="delete" >삭제</a>
+</ody>
+
+</html>

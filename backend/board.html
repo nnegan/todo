@@ -1,26 +1,97 @@
 <!doctype html>
-
 <html>
-
 <head>
 
     <meta charset="utf-8">
-
     <title>HTML Example</title>
-
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-
     <script>
 
-        $(document).ready(function(){
+        function searchlist(page){
+            if ( page == null ) page = 1;
+            $.ajax({
+                url: "http://localhost:18080/backend/v1/todo/list?&pageSize=5&page="+page,
+                type: "GET",
+                dataType: "json",
+                success: function(data) {
+                    console.log(data);
+                    console.log(data.dataList);
 
-            $("p").click(function(){
+                    var str = "";
+                    $(data.dataList).each(function(){
+                        str += "<li style='font-size:17px;height: 50px;'>" +
+                            "<input type='checkbox' value='" + this.boardNumber + "'/> " + "번호:"+this.boardNumber + "  내용:" + this.boardContents;
+                        str += "  등록일:" + this.createdAt + "  수정일:" + this.updatedAt;
+                        str += "  상태:" + (this.boardStatus == "Y" ? "완료" : "미완료");
+                        $(this.boardRelation).each(function(){
+                            str += "&nbsp;&nbsp;&nbsp;&nbsp; #" + this.relationBoardNumber + "  "
+                        });
+                            + "</li>";
+                    });
+                    $("#todolist").html(str);
 
-                $(this).hide();
+                    paging(data.totalCount, data.pageSize, data.page, page);
 
+                }
+            });
+        }
+
+
+        function paging(totalData, dataPerPage, pageCount, currentPage){
+
+            console.log("currentPage : " + currentPage);
+
+            var totalPage = Math.ceil(totalData/dataPerPage);    // 총 페이지 수
+            var pageGroup = Math.ceil(currentPage/pageCount);    // 페이지 그룹
+
+            console.log("pageGroup : " + pageGroup);
+
+            var last = pageGroup * pageCount;    // 화면에 보여질 마지막 페이지 번호
+            if(last > totalPage)
+                last = totalPage;
+            var first = last - (pageCount-1);    // 화면에 보여질 첫번째 페이지 번호
+            var next = last+1;
+            var prev = first-1;
+
+            console.log("last : " + last);
+            console.log("first : " + first);
+            console.log("next : " + next);
+            console.log("prev : " + prev);
+
+            var $pingingView = $("#paging");
+
+            var html = "";
+
+            if(prev > 0)
+                html += "<a href=# id='prev'><</a> ";
+
+            for(var i=first; i <= last; i++){
+                html += "<a href='#' id=" + i + ">" + i + "</a> ";
+            }
+
+            if(last < totalPage)
+                html += "<a href=# id='next'>></a>";
+
+            $("#paging").html(html);    // 페이지 목록 생성
+            $("#paging a").css("color", "black");
+            $("#paging a#" + currentPage).css({"text-decoration":"none",
+                "color":"red",
+                "font-weight":"bold"});    // 현재 페이지 표시
+
+            $("#paging a").click(function(){
+
+                var $item = $(this);
+                var $id = $item.attr("id");
+                var selectedPage = $item.text();
+
+                if($id == "next")    selectedPage = next;
+                if($id == "prev")    selectedPage = prev;
+
+                searchlist(selectedPage);//paging(totalData, dataPerPage, pageCount, selectedPage);
             });
 
-        });
+        }
+
 
     </script>
 
@@ -30,15 +101,14 @@
 
 <p>여기를 클릭하세요</p>
 
-<input type="text"/> 조회 추가
-<div id="list">
-    <div class="list"><input type="checkbox" > Contents </div>
-
-    <div><input type="checkbox" > Contents </div>
-    <div><input type="checkbox" > Contents </div>
-    <div><input type="checkbox" > Contents </div>
+<input type="text"/> <a href="javascript:searchlist();" id="search" >조회</a>
+<a href="./board_add.html" >추가</a>
+<div style="height: 20px;"></div>
+리스트
+<div id="todolist" >
 
 </div>
+<div id="paging"></div>
 </body>
 
 </html>

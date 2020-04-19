@@ -31,7 +31,7 @@ public class BoardServiceImpl implements BoardService {
         CommonDataModel<Board> result = new CommonDataModel<Board>();
 
         // 참조하는 다른 todo 항목을 점검한다.
-        if ( board.getBoardRelation() != null ) {
+       /* if ( board.getBoardRelation() != null ) {
             for (BoardRelation boardRelation : board.getBoardRelation()) {
 
                 if (!repository.existsById(boardRelation.getRelationBoardNumber())) {
@@ -41,7 +41,7 @@ public class BoardServiceImpl implements BoardService {
                     return  result;
                 }
             }
-        }
+        }*/
         repository.save(board);
         result.setReturnCode("SUCCESS");
         result.setMessage("성공");
@@ -85,7 +85,7 @@ public class BoardServiceImpl implements BoardService {
 
         rv.setPageSize(pageBoard.getSize());
         rv.setPage(pageBoard.getNumber() + 1);
-        rv.setTotalCount(pageBoard.getSize());
+        rv.setTotalCount((int)pageBoard.getTotalElements());
 
         return rv;
     }
@@ -116,7 +116,7 @@ public class BoardServiceImpl implements BoardService {
         CommonDataModel<Board> result = new CommonDataModel<Board>();
 
         // 참조하는 다른 todo 항목을 점검한다.
-        if ( board.getBoardRelation() != null ) {
+       /* if ( board.getBoardRelation() != null ) {
             for (BoardRelation boardRelation : board.getBoardRelation()) {
 
                 if (!repository.existsById(boardRelation.getRelationBoardNumber())) {
@@ -134,7 +134,7 @@ public class BoardServiceImpl implements BoardService {
                     return result;
                 }
             }
-        }
+        }*/
 
         Optional<Board> oboard = repository.findById(board.getBoardNumber());
 
